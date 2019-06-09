@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    
+    <script src="https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
+    
+    
+    <style>
+    html{margin:0;padding:0; }
+    body{position:relative; padding:0; margin:0; height:100vh;
+    width:100vw; overflow:hidden; background:#dadada;}
+    #code{
+    position:absolute;
+    top:0;
+    left:0; 
+    width:350px; 
+    height: calc( 100vh - 40px);
+    box-sizing:border-box;
+    }
+     #preview{
+     position:absolute;
+    top:0;
+    left:350px;
+    bottom:0;
+    right:0;
+    }
+    
+    #preview > svg {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    }
+
+    #submit{
+    position:absolute; 
+    left:0;
+    bottom:0;
+    width:350px;
+    height:40px;
+    line-height:40px;
+    box-sizing:border-box;
+    }
+    
+    </style>
+
+  </head>
+  <body>
+    <form id="myform">
+    <textarea id="code"></textarea>
+    
+    <div id="preview">
+    
+    </div>
+    
+    <button type="submit" id="submit">Insert</button>
+    
+    
+    </form>
+    
+    <script>
+    var $form=$('#myform'), $code=$('#code'), preview=$('#preview_content'), lastCorrectCode='';
+    
+
+const renderPreview = debounce(function(){
+  var source=$code.val();
+  var oldHTML=$('#preview').html()
+  let parseError=mermaid.parse(source)
+  
+  if(parseError){
+    
+     $code.css('border','1px solid red')
+     return 
+  }
+  $('#dpreview_content').remove()  
+  $('#preview').html('<svg id="preview_content"/>'); 
+  mermaid.render('preview_content',  source, (svg, error)=>{
+  var  width=$('#preview_content').width()+25;
+  var  height=$('#preview_content').height()+25; 
+  if(svg){ 
+  lastCorrectCode=source;
+  $('#preview').html(svg); 
+  $('#preview_content').attr({width, height});  
+  $code.css('border','1px solid green')
+  } 
+  });  
+   
+}, 250)
+
+function load(cb){
+  $(function(){ 
+   google.script.run
+     .withFailureHandler(err=>alert(err))
+     .withSuccessHandler(source=> cb(source) )
+     .withUserObject(this)
+     .getSourceOfSelectedItem(); 
+   })
+}
+ 
+const defaultContent=`
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+`
+
+load(source=>{
+  if(source){
+  $('#submit').text('Update')
+  }
+  source=source||defaultContent;
+  $code.val(source); 
+  mermaid.initialize({
+     startOnLoad:false,
+     
+    theme: 'forest'
+  });
+  $code.on('keyup', e=>renderPreview());
+  renderPreview();
+  
+  $form.submit(function(e){
+    e.preventDefault()
+    
+    let svg=document.getElementById('preview_content')
+    svgAsPng(svg, base64=>{
+    google.script.run
+      .withFailureHandler( msg=>alert(msg))
+      .withSuccessHandler(()=> google.script.host.close() )
+      .withUserObject(this)
+      .insertImage(lastCorrectCode,base64);
+    })
+  }) 
+}); 
+
+function svgAsPng(mySVG,cb){ 
+  var  can      = document.createElement('canvas'), // Not shown on page
+  ctx      = can.getContext('2d'),
+  loader   = new Image;                        // Not shown on page 
+  
+  loader.width  = can.width  = mySVG.getAttribute('width');
+  loader.height = can.height = mySVG.getAttribute('height');
+  loader.onload = function(){ 
+    ctx.drawImage( loader, 0, 0, loader.width, loader.height );
+    cb(can.toDataURL());
+  };
+  var svgAsXML = (new XMLSerializer).serializeToString( mySVG );
+  loader.src = 'data:image/svg+xml,' + encodeURIComponent( svgAsXML ); 
+}
+
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+    </script>
+  </body>
+</html>
+
+
