@@ -1,0 +1,19 @@
+      body{ 
+        margin:0;
+        padding:0;
+        font-family:sans-serif;
+      }
+      #content{
+        max-width: 800px; 
+        margin:auto;
+        padding:40px;
+        color:#333;
+      }
+      img{
+        width: 100%;
+        height: auto;
+      }
+      footer {
+        padding: 20px;
+        text-align: center;
+      }
