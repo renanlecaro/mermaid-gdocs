@@ -1,87 +1,60 @@
-import './index.css';
-import './setupHTML.js';
-import $ from 'jquery';
-import mermaid from 'mermaid';
+import './index.css'; 
 import {loadStartCode, applyChanges} from './google.js';
+import {svgAsPng} from './svgAsPng.js';
+import {debounce} from './debounce.js';
+function byId(id){
+  let res=document.getElementById(id);
+  if(!res) console.log('no result for id ' +id);
+  return res;
+} 
+ 
+const mermaid=window.mermaid
 
-var $form = $('#myform'),
-  $code = $('#code'),
-  preview = $('#preview_content'),
-  lastCorrectCode = '';
-
+let lastCorrectCode=''
 const renderPreview = debounce(function() {
-  var source = $code.val();
-  var oldHTML = $('#preview').html();
+  var source = byId('code').value;
+  var oldHTML = byId('preview').innerHTML;
   try {
-    $('#dpreview_content').remove();
-    $('#preview').html('<div id="preview_content"/>'); 
     mermaid.parse(source)
-    $('#preview_content').text(source)
-    mermaid.init(undefined, $('#preview_content')[0]) 
-    $code.css('border', '');
+    byId('preview').setAttribute('data-processed', ''); 
+    byId('preview').innerHTML=source; 
+    mermaid.init(undefined, byId('preview')) 
+     byId('code').style.border=''
+    lastCorrectCode=source;
   } catch (e) {
-    $('#preview').html(oldHTML);
-    $code.css('border', '1px solid red');
+    console.error(e)
+    byId('preview').innerHTML=oldHTML;
+    byId('code').style.border= '1px solid red';
   }
 }, 250);
 
 const defaultContent = `
-graph TD;
+graph TD
     A-->B;
     A-->C;
     B-->D;
     C-->D;
 `;
+
 loadStartCode(source => {
   if (source) {
-    $('#submit').text('Update');
+    byId('submit').innerText='Update';
   }
   source = source || defaultContent;
-  $code.val(source);
+  byId('code').value=source;
   mermaid.initialize({
     startOnLoad: false,
     theme: 'forest',
   });
-  $code.on('keyup', e => renderPreview());
+  byId('code').addEventListener('keyup', e => renderPreview());
   renderPreview();
 
-  $form.submit(function(e) {
+  byId('form').addEventListener('submit',function(e) {
     e.preventDefault();
 
-    let svg = document.getElementById('preview_content');
-    svgAsPng(svg, base64 => {
-      applyChanges(lastCorrectCode, base64);
+    let svg = document.getElementsByTagName('svg')[0]
+    svgAsPng(svg, (base64, width, height) => {
+      applyChanges(lastCorrectCode, base64,width, height);
     });
   });
 });
-
-function svgAsPng(mySVG, cb) {
-  var can = document.createElement('canvas'), // Not shown on page
-    ctx = can.getContext('2d'),
-    loader = new Image(); // Not shown on page
-
-  loader.width = can.width = mySVG.getAttribute('width');
-  loader.height = can.height = mySVG.getAttribute('height');
-  loader.onload = function() {
-    ctx.drawImage(loader, 0, 0, loader.width, loader.height);
-    cb(can.toDataURL());
-  };
-  var svgAsXML = new XMLSerializer().serializeToString(mySVG);
-  loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
-}
-
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function() {
-    var context = this,
-      args = arguments;
-    var later = function() {
-      timeout = null;
-      if (!immediate) func.apply(context, args);
-    };
-    var callNow = immediate && !timeout;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-    if (callNow) func.apply(context, args);
-  };
-}

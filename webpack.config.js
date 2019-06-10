@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 var HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -20,8 +22,10 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-        inlineSource: '.(js|css)$' // embed all javascript and css inline
+        inlineSource: '.(js|css)$' , 
+      template: 'src/index.html'
     }),
-    new HtmlWebpackInlineSourcePlugin()
-  ]  
+    new HtmlWebpackInlineSourcePlugin(),
+  ] .concat(
+    process.env.SHOW_BUNDLE ? [new BundleAnalyzerPlugin()]:[])
 };  

@@ -7,9 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server --inline --hot  --content-base ./dist",
     "build": "webpack",
-    "pretty":"prettier --single-quote=true --no-bracket-spacing --jsx-bracket-same-line --trailing-comma=es5 --write src/**/*.{js,css}"
+    "pretty": "prettier --single-quote=true --no-bracket-spacing --jsx-bracket-same-line --trailing-comma=es5 --write src/**/*.{js,css}",
+    "size": "SHOW_BUNDLE=true npm run build"
   },
   "repository": {
     "type": "git",
@@ -29,11 +30,9 @@
     "prettier": "^1.18.2",
     "style-loader": "^0.23.1",
     "webpack": "^4.33.0",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.3",
     "webpack-dev-server": "^3.7.1"
   },
-  "dependencies": {
-    "jquery": "^3.4.1",
-    "mermaid": "^8.0.0"
-  }
+  "dependencies": {}
 }

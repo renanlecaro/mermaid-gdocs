@@ -2,7 +2,7 @@
 function onOpen() {
   DocumentApp.getUi() 
       .createMenu('Dialog')
-      .addItem('Edit', 'openDialog')
+      .addItem('Create new / Edit selected', 'openDialog')
       .addToUi();
 }
 
@@ -40,7 +40,7 @@ function getSourceOfSelectedItem(){
  if(selected) return selected.getAltDescription()  
 }
 
-function insertImage(source, base64){
+function insertImage(source, base64,width, height){
   var blob=Utilities.newBlob(Utilities.base64Decode(base64.split(',')[1]), 'image/png', "mermaid-chart.png");
   
  var selected=findSelectedImage()
@@ -67,4 +67,6 @@ function insertImage(source, base64){
  
   posImage.setAltDescription(source);
   posImage.setAltTitle('mermaid-graph')
+  posImage.setWidth(width/2)
+  posImage.setHeight(height/2)
 }
