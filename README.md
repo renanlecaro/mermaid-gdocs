@@ -41,3 +41,9 @@ mermaid syntax
 
 Do whatever you want with this code, but i'm not responsible if it breaks. I'm trying to publish it on the google apps store so that people can use it in their google docs
 
+# Screenshots
+
+![Screenshot](docs/sc1.png?raw=true)
+![Screenshot](docs/sc2.png?raw=true)
+![Screenshot](docs/sc3.png?raw=true)
+![Screenshot](docs/sc4.png?raw=true)
