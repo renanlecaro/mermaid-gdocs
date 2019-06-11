@@ -12,18 +12,7 @@ color:#333;
 a.button.action {
   padding: 0 10px;
   float: right;
-}
-.gallery {
-  display: flex;
-  overflow-x: scroll;
-  background:#333;
-  margin-top: 50px;
-}
-.gallery>img {
-  height:500px;
-  width:auto;
-  margin:0 10px;
-}
+} 
 footer {
 padding: 20px;
 text-align: center;
