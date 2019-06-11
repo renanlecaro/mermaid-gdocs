@@ -17,9 +17,8 @@ html,body {
   display: flex;
   flex-direction: column;
 }
-.left .samples{
-  height: 29px;
-  line-height: 29px;
+.left .samples{ 
+
 }
 .right{ 
   flex-grow: 1;
@@ -35,10 +34,10 @@ html,body {
   text-align: center;
 }
 
-.form-group #code { 
+.left #code { 
   flex-grow: 1;
   resize: horizontal;
-  width:300px;
+  width:300px; 
 } 
 
 #preview  svg {
