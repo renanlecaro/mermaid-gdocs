@@ -17,3 +17,8 @@ export function applyChanges(lastCorrectCode, base64,width, height) {
     .withUserObject(this)
     .insertImage(lastCorrectCode, base64,width, height);
 }
+
+export function cancelEdit(){ 
+  if (!window.google) return  
+    google.script.host.close()
+}

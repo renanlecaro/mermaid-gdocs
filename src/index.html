@@ -3,15 +3,25 @@
   <head>
     <base target="_top">  
     <script src="//unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+
     <title>Mermaid google docs</title>
   </head>
   <body>
     <form id="form">
-  <div class="left">
-    <textarea id="code"></textarea>
-    <button type="submit" id="submit">Insert</button> 
+    
+    <div class="form-group left"> 
+      <textarea id="code"></textarea>
+    </div>
+  <div class="right">
+    <pre id="preview"></pre>
+
+    <div class="buttons">
+      
+      <button id="cancel">Cancel</button> 
+      <button class="action" type="submit" id="submit">Insert</button> 
+    </div>
   </div>
-  <pre id="preview"></pre>
 </form>
   </body>
 </html>

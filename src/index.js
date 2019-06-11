@@ -1,5 +1,5 @@
 import './index.css'; 
-import {loadStartCode, applyChanges} from './google.js';
+import {loadStartCode, applyChanges,cancelEdit} from './google.js';
 import {svgAsPng} from './svgAsPng.js';
 import {debounce} from './debounce.js';
 function byId(id){
@@ -58,3 +58,8 @@ loadStartCode(source => {
     });
   });
 });
+
+byId('cancel').addEventListener('click',e=>{
+  e.preventDefault()
+  cancelEdit()
+})
