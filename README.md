@@ -1,7 +1,5 @@
 # mermaid-gdocs
-Mermaidsjs wrapper for gdocs
-
-Wraps https://mermaidjs.github.io/ to make it run inside gdocs
+[Mermaidsjs](https://mermaidjs.github.io/) wrapper for google docs
 
 # Development setup
 
