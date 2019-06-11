@@ -1,46 +1,46 @@
-html,body { 
+html,
+body {
   padding: 0;
   margin: 0;
-  overflow: hidden; 
+  overflow: hidden;
 }
-#form{  
+#form {
   height: 100vh;
-  width: 100vw;  
+  width: 100vw;
   display: flex;
   padding: 20px;
   box-sizing: border-box;
-} 
-.left{ 
+}
+.left {
   flex-grow: 0;
-  flex-shrink: 0; 
-  margin-right: 20px; 
+  flex-shrink: 0;
+  margin-right: 20px;
   display: flex;
   flex-direction: column;
 }
-.left .samples{ 
-
+.left .samples {
 }
-.right{ 
+.right {
   flex-grow: 1;
-  flex-shrink: 1;  
+  flex-shrink: 1;
   display: flex;
   flex-direction: column;
-} 
-.right #preview{
+}
+.right #preview {
   position: relative;
   flex-grow: 1;
 }
-.right .buttons{
+.right .buttons {
   text-align: center;
 }
 
-.left #code { 
+.left #code {
   flex-grow: 1;
   resize: horizontal;
-  width:300px; 
-} 
+  width: 300px;
+}
 
-#preview  svg {
+#preview svg {
   margin: auto;
   position: absolute;
   top: 0;
@@ -48,8 +48,7 @@ html,body {
   right: 0;
   bottom: 0;
   background: white;
-  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   width: auto !important;
   height: auto !important;
 }
- 

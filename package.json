@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "start": "webpack-dev-server --inline --hot  --content-base ./dist",
+    "start": "webpack-dev-server --content-base ./dist",
     "build": "webpack",
     "pretty": "prettier --single-quote=true --no-bracket-spacing --jsx-bracket-same-line --trailing-comma=es5 --write src/**/*.{js,css}",
     "size": "SHOW_BUNDLE=true npm run build"
