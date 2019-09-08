@@ -24,16 +24,14 @@ So now i'm just grabbing mermaid.min.js from a cdn
 
 - There's no help at all
 
-- It would be nice to have an "edit selected" entry, and then "add gantt", "add flow chart", etc.. that would just initialize the window with some sample 
-mermaid syntax 
-
-- I need to test this in chrome and IE
-
-- It would be nice to be able to change themes
+- Only tested in chrome
 
 - large graphs may render at low resolutions
 
 - gantt graphs have lots of useless padding on top and bottom
+
+- it's still a bit laggy and slow
+
 
 # License : MIT
 
