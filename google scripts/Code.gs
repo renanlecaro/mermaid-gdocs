@@ -1,6 +1,7 @@
 function onInstall(e) {
   onOpen(e); 
 }
+
 function onOpen() {
   DocumentApp.getUi() 
       .createAddonMenu() 
@@ -11,15 +12,15 @@ function onOpen() {
       .addItem('New Class Diagram', 'newClassDiagram')
       .addToUi();
 }
+
 function edit(){
   var selected=findSelectedImage()
   if(!selected){
-    DocumentApp.getUi().alert('Please selecte an existing chart created with this app first.');
+    DocumentApp.getUi().alert('Please select an existing chart created with this app first.');
   }else{
     openDialog(selected.getAltDescription(), 'Update')
   }
 }
-
 
 function newFlowchart(){
   var selected=findSelectedImage()
@@ -31,7 +32,6 @@ function newFlowchart(){
   }
 }
 
-
 function newSequence(){
   var selected=findSelectedImage()
   if(selected){
@@ -42,7 +42,6 @@ function newSequence(){
   }
 }
 
-
 function newGantt(){
   var selected=findSelectedImage()
   if(selected){
@@ -52,7 +51,6 @@ function newGantt(){
     'Insert')
   }
 }
-
 
 function newClassDiagram(){
   var selected=findSelectedImage()
@@ -94,7 +92,6 @@ function findSelectedImage(){
   
 }
  
-
 function insertImage(source, base64,width, height){
   var blob=Utilities.newBlob(Utilities.base64Decode(base64.split(',')[1]), 'image/png', "mermaid-chart.png");
   
@@ -113,13 +110,12 @@ function insertImage(source, base64,width, height){
   }
   
   if(!posImage){
-    // No cursor or coud not insert
+    // No cursor or could not insert
   var body = DocumentApp.getActiveDocument().getBody();
     var paragraph = body.appendParagraph('')
     posImage   = paragraph.appendInlineImage(blob);
   }
 
- 
   posImage.setAltDescription(source);
   posImage.setAltTitle('mermaid-graph')
   posImage.setWidth(width/2)
