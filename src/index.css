@@ -8,15 +8,14 @@ body {
   height: 100vh;
   width: 100vw;
   display: flex;
-  padding: 20px;
   box-sizing: border-box;
 }
 .left {
   flex-grow: 0;
   flex-shrink: 0;
-  margin-right: 20px;
   display: flex;
   flex-direction: column;
+  margin: 20px 0 20px 20px ;
 }
 .left .samples {
 }
@@ -25,14 +24,20 @@ body {
   flex-shrink: 1;
   display: flex;
   flex-direction: column;
+  margin: 0;
 }
 .right #preview {
   position: relative;
   flex-grow: 1;
   overflow: auto;
+  margin: 0;
+  text-align: center;
+  display: flex;
+  padding: 20px;
 }
 .right .buttons {
   text-align: center;
+  margin:20px ;
 }
 
 .left #code {
@@ -42,14 +47,14 @@ body {
 }
 
 #preview svg {
-  margin: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   background: white;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
   width: auto !important;
   height: auto !important;
+  flex-shrink:0;
+  /*
+  Centering an item cross browser with overflow was trickier than expected.
+  https://stackoverflow.com/a/33455342 */
+  margin: auto;
+  align-self: safe center;
 }
