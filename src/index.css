@@ -29,6 +29,7 @@ body {
 .right #preview {
   position: relative;
   flex-grow: 1;
+  overflow: auto;
 }
 .right .buttons {
   text-align: center;
