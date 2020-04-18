@@ -32,7 +32,11 @@ body {
   overflow: auto;
   margin: 0;
   text-align: center;
-  display: flex;
+  /*Trying to make the graph centered always results
+  in problems, we might as well give up. Lately, the
+  sequence diagrams were not displayed in chrome for
+  some reason. */
+  /*display: flex;*/
   padding: 20px;
 }
 .right .buttons {
