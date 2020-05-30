@@ -10,6 +10,10 @@ function onOpen() {
       .addItem('New Sequence', 'newSequence')
       .addItem('New Gantt', 'newGantt')
       .addItem('New Class Diagram', 'newClassDiagram')
+//      .addItem('New Git Graph', 'newGitGraph')
+      .addItem('New Entity Relationship Diagram', 'newERDiagram')
+      .addItem('New User journey', 'newUserJourney')
+      .addItem('New Pie Chart', 'newPieChart')
       .addToUi();
 }
 
@@ -59,6 +63,47 @@ function newClassDiagram(){
   }else{
     openDialog("classDiagram\nClass01 <|-- AveryLongClass : Cool\nClass03 *-- Class04\nClass05 o-- Class06\nClass07 .. Class08\nClass09 --> C2 : Where am i?\nClass09 --* C3\nClass09 --|> Class07\nClass07 : equals()\nClass07 : Object[] elementData\nClass01 : size()\nClass01 : int chimp\nClass01 : int gorilla\nClass08 <--> C2: Cool label",
     'Insert')
+  }
+}
+function newStateDiagram(){
+  var selected=findSelectedImage()
+  if(selected){
+    DocumentApp.getUi().alert('You have a chart selected, please unselect it first, or click "edit" to edit it.');
+  }else{
+    openDialog('stateDiagram-v2\n    [*] --> Still\n    Still --> [*]\n\n    Still --> Moving\n    Moving --> Still\n    Moving --> Crash\n    Crash --> [*]')
+  }
+}
+//function newGitGraph(){
+//  var selected=findSelectedImage()
+//  if(selected){
+//    DocumentApp.getUi().alert('You have a chart selected, please unselect it first, or click "edit" to edit it.');
+//  }else{
+//    openDialog('gitGraph:\noptions\n{\n    "nodeSpacing": 150,\n    "nodeRadius": 10\n}\nend\ncommit\nbranch newbranch\ncheckout newbranch\ncommit\ncommit\ncheckout master\ncommit\ncommit\nmerge newbranch')
+//  }
+//}
+
+function newERDiagram(){
+  var selected=findSelectedImage()
+  if(selected){
+    DocumentApp.getUi().alert('You have a chart selected, please unselect it first, or click "edit" to edit it.');
+  }else{
+    openDialog('erDiagram\n    CUSTOMER ||--o{ ORDER : places\n    ORDER ||--|{ LINE-ITEM : contains\n    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses\n')
+  }
+}
+function newUserJourney(){
+  var selected=findSelectedImage()
+  if(selected){
+    DocumentApp.getUi().alert('You have a chart selected, please unselect it first, or click "edit" to edit it.');
+  }else{
+    openDialog('journey\n    title My working day\n    section Go to work\n      Make tea: 5: Me\n      Go upstairs: 3: Me\n      Do work: 1: Me, Cat\n    section Go home\n      Go downstairs: 5: Me\n      Sit down: 5: Me')
+  }
+}
+function newPieChart(){
+  var selected=findSelectedImage()
+  if(selected){
+    DocumentApp.getUi().alert('You have a chart selected, please unselect it first, or click "edit" to edit it.');
+  }else{
+    openDialog('pie\n    title Key elements in Product X\n    "Calcium" : 42.96\n    "Potassium" : 50.05\n    "Magnesium" : 10.01\n    "Iron" :  5\n')
   }
 }
 

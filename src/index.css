@@ -11,12 +11,20 @@ body {
   position: absolute;
 }
 
+.left #code-docs-link{
+  position: absolute;
+  top: 20px;
+  left: 20px; 
+  height: 40px;
+  line-height: 40px;
+  font-weight: bold;
+}
 .left #code {
  resize: none;
- height: calc( 100vh - 90px);
+ height: calc( 100vh - 130px);
   position: absolute;
   width: 380px;
-  top: 20px;
+  top: 60px;
   left: 20px; 
 }
 .left #theme{
