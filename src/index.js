@@ -17,11 +17,11 @@ let theme='';
 const renderPreview = debounce(function() {
 
   var source = byId('code').value.trim();
-  var oldHTML = byId('preview').innerHTML; 
+  var oldHTML = byId('preview').innerHTML;
   try {
     mermaid.parse(source);
     byId('preview').setAttribute('data-processed', '');
-    byId('preview').innerHTML = source;
+    byId('preview').textContent = source;
 
     mermaid.initialize({
       startOnLoad: false,
@@ -33,7 +33,7 @@ const renderPreview = debounce(function() {
     updateSourceCodeLabel()
   } catch (e) {
     console.error(e);
-    byId('preview').innerHTML = oldHTML;
+    byId('preview').textContent = oldHTML;
     byId('code').style.border = '1px solid red';
   }
 }, 100);
@@ -46,7 +46,7 @@ const defaultContent = `graph LR
 `;
 
 function setCode(source) {
-  byId('code').value = source || defaultContent; 
+  byId('code').value = source || defaultContent;
   renderPreview();
 }
 
@@ -86,7 +86,7 @@ function submitGraph(e){
   byId('code').disabled=true
   byId('theme').disabled=true
   byId('cancel').disabled=true
-   
+
   byId('form').removeEventListener('submit', submitGraph);
 
   let svg = document.getElementsByTagName('svg')[0];
@@ -123,7 +123,7 @@ function getDocsLink(type){
       label: 'Flowchart',
       link: 'https://mermaid-js.github.io/mermaid/#/flowchart'
     }
-  } 
+  }
   if(type==="sequenceDiagram"){
     return {
       label: 'Sequence diagram',
@@ -135,13 +135,13 @@ function getDocsLink(type){
       label: 'Class diagram',
       link: 'https://mermaid-js.github.io/mermaid/#/classDiagram'
     }
-  } 
+  }
   if(type==="stateDiagram-v2"){
     return {
       label: 'State diagram',
       link: 'https://mermaid-js.github.io/mermaid/#/stateDiagram'
     }
-  } 
+  }
   if(type==="erDiagram"){
     return {
       label: 'ER diagram ',
