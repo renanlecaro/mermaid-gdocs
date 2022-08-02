@@ -1,10 +1,14 @@
+/**
+ * @OnlyCurrentDoc
+ */
+
 function onInstall(e) {
-  onOpen(e); 
+  onOpen();
 }
 
 function onOpen() {
-  DocumentApp.getUi() 
-      .createAddonMenu() 
+  DocumentApp.getUi()
+      .createAddonMenu()
       .addItem('Edit selected', 'edit')
       .addItem('New Flowchart', 'newFlowchart')
       .addItem('New Sequence', 'newSequence')
@@ -20,7 +24,7 @@ function onOpen() {
 function edit(){
   var selected=findSelectedImage()
   if(!selected){
-    DocumentApp.getUi().alert('Please select an existing chart created with this app first.');
+    DocumentApp.getUi().alert('Please select an existing chart created with this app first. Please make sure that it is positionned inline.');
   }else{
     openDialog(selected.getAltDescription(), 'Update')
   }
@@ -107,29 +111,29 @@ function newPieChart(){
   }
 }
 
-function openDialog(source,label) { 
- 
+function openDialog(source,label) {
+
   var html = HtmlService.createHtmlOutputFromFile('index')
       .append('<script>window.setup('+JSON.stringify(source)+', '+JSON.stringify(label)+')</script>')
       .setWidth(1200)
     .setHeight(800);
-    
+
   DocumentApp.getUi()
       .showModalDialog(html, 'Graph editor')
 }
 
 function findSelectedImage(){
  var selection=DocumentApp.getActiveDocument().getSelection();
-    
+
   if (selection) {
     var elements = selection.getRangeElements();
     for (var i = 0; i < elements.length; i++) {
       var element = elements[i].getElement()
-  
+
       // Only modify elements that can be edited as text; skip images and other non-text elements.
-      if (element.getType()==DocumentApp.ElementType.INLINE_IMAGE && 
-      element.asInlineImage().getAltTitle() == 'mermaid-graph') {
-      return element.asInlineImage()
+      if (element.getType()==DocumentApp.ElementType.INLINE_IMAGE  &&
+      element.asInlineImage().getAltTitle() == 'mermaid-graph'  )  {
+        return element.asInlineImage()
    
       }
     }
