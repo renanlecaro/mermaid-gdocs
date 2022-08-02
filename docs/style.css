@@ -8,7 +8,11 @@ max-width: 800px;
 margin:auto;
 padding:40px;
 color:#333;
-} 
+}
+.logo-wrap{
+ text-align: center;
+  margin: 20px 0;
+}
 a.button.action {
   padding: 0 10px;
   float: right;
