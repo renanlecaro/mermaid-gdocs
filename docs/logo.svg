@@ -16,9 +16,9 @@
    id="svg8"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/renan/other/mermaid-gdocs/logo.png"
-   inkscape:export-xdpi="19.018869"
-   inkscape:export-ydpi="19.018869">
+   inkscape:export-filename="/home/renan/other/mermaid-gdocs/logo-32.png"
+   inkscape:export-xdpi="5.0716982"
+   inkscape:export-ydpi="5.0716982">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -28,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.49497475"
-     inkscape:cx="-127.80265"
-     inkscape:cy="596.08132"
+     inkscape:zoom="0.35"
+     inkscape:cx="81.357961"
+     inkscape:cy="-166.78621"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -40,9 +40,9 @@
      fit-margin-right="0"
      fit-margin-bottom="0"
      inkscape:window-width="1920"
-     inkscape:window-height="1080"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-height="1031"
+     inkscape:window-x="3840"
+     inkscape:window-y="49"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata5">
@@ -52,7 +52,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,7 +65,9 @@
        style="fill:#c8e0ec;fill-opacity:1;stroke-width:0.26458332"
        d="M 188.56268,83.866081 A 80.130951,80.130951 0 0 1 131.91768,182.01536 80.130951,80.130951 0 0 1 33.768383,125.37035 80.130951,80.130951 0 0 1 90.41339,27.221074 80.130951,80.130951 0 0 1 188.56268,83.866081 Z"
        id="path815"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="20.286793"
+       inkscape:export-ydpi="20.286793" />
     <rect
        style="opacity:1;fill:#003a59;fill-opacity:1;stroke-width:0.26458332"
        id="rect1030"
@@ -151,5 +153,118 @@
          x="68.484604"
          y="152.5578"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Ubuntu Mono';-inkscape-font-specification:'Ubuntu Mono';fill:#c8e0ec;fill-opacity:1;stroke-width:0.70291764">A -&gt; B</tspan></text>
+    <path
+       style="fill:#c8e0ec;fill-opacity:1;stroke-width:0.26458332"
+       d="M 226.48064,269.59096 A 80.130952,80.130952 0 0 1 205.48445,380.95117 80.130952,80.130952 0 0 1 94.124225,359.95499 80.130952,80.130952 0 0 1 115.12042,248.59477 80.130952,80.130952 0 0 1 226.48064,269.59096 Z"
+       id="path815-3"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="5.0716982"
+       inkscape:export-ydpi="5.0716982" />
+    <path
+       style="fill:#003a59;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 228.20333,292.50904 c -37.07265,6.41952 -83.92237,52.50712 -143.868228,47.53984 a 80.130952,80.130952 0 0 0 9.789348,19.90623 80.130952,80.130952 0 0 0 111.3602,20.99581 80.130952,80.130952 0 0 0 31.5491,-89.16923 c -2.88062,-0.0498 -5.82288,0.20656 -8.83042,0.72735 z"
+       id="path4831-7"
+       inkscape:connector-curvature="0" />
+    <rect
+       style="opacity:1;fill:#003a59;fill-opacity:1;stroke-width:0.69968784"
+       id="rect1030-6"
+       width="79.464554"
+       height="79.464554"
+       x="123.51112"
+       y="277.84576"
+       ry="5.122716" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:46.48603058px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c8e0ec;fill-opacity:1;stroke:none;stroke-width:1.16215074"
+       x="139.82297"
+       y="334.86829"
+       id="text4807-2"><tspan
+         sodipodi:role="line"
+         id="tspan4805-9"
+         x="139.82297"
+         y="334.86829"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#c8e0ec;fill-opacity:1;stroke-width:1.16215074">M</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.58333302px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="258.57623"
+       y="228.21643"
+       id="text998"><tspan
+         sodipodi:role="line"
+         id="tspan996"
+         x="258.57623"
+         y="228.21643"
+         style="stroke-width:0.26458332"> </tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot1000"
+       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;letter-spacing:0px;word-spacing:0px"><flowRegion
+         id="flowRegion1002"><rect
+           id="rect1004"
+           width="276.7818"
+           height="111.11678"
+           x="612.15247"
+           y="712.79047" /></flowRegion><flowPara
+         id="flowPara1006"></flowPara></flowRoot>    <rect
+       style="fill:#c8e0ec;fill-opacity:1;stroke-width:0.26458332"
+       id="rect1008"
+       width="220"
+       height="140"
+       x="-300.82849"
+       y="282.26703"
+       inkscape:export-xdpi="25.4"
+       inkscape:export-ydpi="25.4" />
+    <rect
+       style="fill:#c8e0ec;fill-opacity:1;stroke-width:0.31798956"
+       id="rect1033-6"
+       width="117.92857"
+       height="44.601189"
+       x="-198.75706"
+       y="377.66583" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:17.57845116px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#003a59;fill-opacity:1;stroke:none;stroke-width:0.43946126"
+       x="-188.17238"
+       y="408.2637"
+       id="text4807-0-1"><tspan
+         sodipodi:role="line"
+         id="tspan4805-62-8"
+         x="-188.17238"
+         y="408.2637"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#003a59;fill-opacity:1;stroke-width:0.43946126">Flowchart</tspan></text>
+    <path
+       style="fill:#003a59;fill-opacity:1;stroke-width:0.99999994"
+       d="m -421.73191,1018.7319 c -120.92063,290.9983 -672.70399,246.4713 -832.26269,426.3896 l -0.2906,58.2984 h 831.49614 z"
+       transform="matrix(0.26458333,0,0,0.26458333,31.034579,24.487266)"
+       id="rect1008-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:17.57845116px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#003a59;fill-opacity:1;stroke:none;stroke-width:0.43946126"
+       x="-286.13565"
+       y="307.02704"
+       id="text4807-0-9"><tspan
+         sodipodi:role="line"
+         x="-286.13565"
+         y="307.02704"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#003a59;fill-opacity:1;stroke-width:0.43946126"
+         id="tspan1112">flochart, gantt, </tspan><tspan
+         sodipodi:role="line"
+         x="-286.13565"
+         y="329.00009"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#003a59;fill-opacity:1;stroke-width:0.43946126"
+         id="tspan1116">graphs ...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:17.57845116px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c8e0ec;fill-opacity:1;stroke:none;stroke-width:0.43946126"
+       x="-251.35217"
+       y="404.33594"
+       id="text4807-0"><tspan
+         sodipodi:role="line"
+         id="tspan4805-62"
+         x="-251.35217"
+         y="404.33594"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:#c8e0ec;fill-opacity:1;stroke-width:0.43946126">from plain text</tspan></text>
   </g>
 </svg>
