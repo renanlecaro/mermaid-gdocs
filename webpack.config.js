@@ -27,5 +27,10 @@ module.exports = {
     }),
     new HtmlWebpackInlineSourcePlugin(),
   ] .concat(
-    process.env.SHOW_BUNDLE ? [new BundleAnalyzerPlugin()]:[])
+    process.env.SHOW_BUNDLE ? [new BundleAnalyzerPlugin()]:[]),
+
+   devServer: {
+    compress: true,
+    disableHostCheck: true,   
+   }   
 };  
