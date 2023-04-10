@@ -1,39 +1,250 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <base target="_top">
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css">
+    
     <title>Mermaid google docs</title>
-  </head>
-  <body>
-    <form id="form">
 
-    <div class="left">
-      <div id="code-docs-link">Source code of your graph</div>
-      <textarea id="code"></textarea>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
 
-      <select id="theme" style="margin-top:20px">
-        <option value="default">default theme</option>
-        <option value="forest">Forest theme</option>
-        <option value="dark">dark theme</option>
-        <option value="neutral">neutral theme</option>
-      </select>
-    </div>
+</head>
+<body>
+<form id="form">
 
-  <div class="right">
-    <pre id="preview"></pre>
+        <label for="code" id="codelabel">Source code of your graph</label>
+        <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
+        <textarea id="code"></textarea>
+        <select id="theme" >
+            <option value="default">default theme</option>
+            <option value="forest">Forest theme</option>
+            <option value="dark">dark theme</option>
+            <option value="neutral">neutral theme</option>
+        </select>
 
-    <div class="buttons">
-      <button id="cancel">Cancel</button>
-      <button class="action" type="submit" id="submit">Insert</button>
-    </div>
+        <pre id="preview"></pre>
+        <div class="buttons">
+            <button id="cancel">Cancel</button>
+            <button class="action" type="submit" id="submit">Insert</button>
+        </div>
 
-    <a href="https://gsuite.google.com/marketplace/app/mermaid/636321283856" target="_blank" id="please-rate">Rate this app <i class="fa fa-heart"></i></a>
-  </div>
+        <a id="rate" href="https://workspace.google.com/marketplace/app/mermaid/636321283856" target="_blank">Please rate this plugin</a>
 </form>
-  </body>
+
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+
+    function debounce(func, wait, immediate) {
+        var timeout;
+        return function () {
+            var context = this,
+                args = arguments;
+            var later = function () {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            var callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
+        };
+    } 
+    
+    function svgAsPng(mySVG, cb) {
+            const superScaling = 2;
+            var can = document.createElement('canvas'), // Not shown on page
+                ctx = can.getContext('2d'),
+                loader = new Image(); // Not shown on page
+
+            const vb = mySVG.getAttribute('viewBox').split(' ');
+
+            let width = parseInt(vb[2]),
+                height = parseInt(vb[3]);
+
+            if (!width || !height) {
+                let bound = mySVG.getBoundingClientRect();
+                width = bound.width;
+                height = bound.height;
+            }
+
+            mySVG.setAttribute('width', width);
+            mySVG.setAttribute('height', height);
+
+            loader.width = can.width = width * superScaling;
+            loader.height = can.height = height * superScaling;
+            loader.onload = function () {
+                ctx.drawImage(loader, 0, 0, loader.width, loader.height);
+                cb(can.toDataURL(), loader.width, loader.height);
+            };
+            var svgAsXML = new XMLSerializer().serializeToString(mySVG);
+            loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
+        }
+
+
+    function byId(id) {
+        let res = document.getElementById(id);
+        if (!res) console.log('no result for id ' + id);
+        return res;
+    }
+
+    let theme = '';
+
+
+    const renderPreview = debounce(async function () {
+
+        var source = byId('code').value.trim();
+        var oldHTML = byId('preview').innerHTML;
+        try {
+            await mermaid.parse(source);
+            byId('preview').setAttribute('data-processed', '');
+            byId('preview').textContent = source;
+
+            await mermaid.initialize({
+                startOnLoad: false,
+                theme,
+            });
+            await mermaid.init(undefined, byId('preview'));
+            byId('code').style.border = '';
+            byId('submit').disabled = false
+        } catch (e) {
+
+            const errorInfo = document.createElement('code')
+            errorInfo.innerText = e.message
+
+            byId('preview').innerHTML = ''
+            byId('preview').appendChild(errorInfo)
+
+            byId('code').style.border = '1px solid red';
+            byId('submit').disabled = true
+
+        }
+    }, 100);
+
+    const defaultContent = `graph LR
+      A[Hard edge] -->|Link text| B(Round edge)
+      B --> C{Decision}
+      C -->|One| D[Result one]
+      C -->|Two| E[Result two]
+  `;
+
+    function setCode(source) {
+        byId('code').value = source || defaultContent;
+        renderPreview();
+    }
+
+
+    function submitGraph(e) {
+        e.preventDefault();
+        byId('submit').disabled = true
+        byId('code').disabled = true
+        byId('theme').disabled = true
+        byId('cancel').disabled = true
+
+        byId('form').removeEventListener('submit', submitGraph);
+
+        let svg = document.getElementsByTagName('svg')[0];
+        svgAsPng(svg, (base64, width, height) => {
+            applyChanges(  byId('code').value, theme, base64, width, height);
+        });
+    }
+
+    byId('cancel').addEventListener('click', e => {
+        e.preventDefault();
+        cancelEdit();
+    });
+
+    byId('theme').addEventListener('change', e => {
+        theme = e.target.value;
+        localStorage.setItem('favorite-theme', theme)
+        renderPreview()
+    });
+
+
+    function applyChanges(lastCorrectCode, theme, base64, width, height) {
+        console.log(lastCorrectCode, base64);
+
+        if (!window.google) return window.open(base64);
+        window.google.script.run
+            .withFailureHandler(msg => alert(msg))
+            .withSuccessHandler(() => google.script.host.close())
+            .withUserObject(this)
+            .insertImage(lastCorrectCode,theme,  base64, width, height);
+    }
+
+    function cancelEdit() {
+        if (!window.google) return;
+        google.script.host.close();
+    }
+
+    function setup(){
+
+        try {
+
+
+            const buttonLabel=window.graphDataFromGoogle?.label
+            if (buttonLabel) {
+                byId('submit').innerText = buttonLabel;
+            }
+          
+            const source=window.graphDataFromGoogle?.source || ''
+            theme=window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
+
+            byId('theme').value = theme
+            setCode(source);
+
+            byId('code').addEventListener('keyup', () => renderPreview());
+            byId('form').addEventListener('submit', submitGraph);
+
+            mermaid.initialize({
+                startOnLoad: false,
+                theme,
+            });
+ 
+        } catch (e) {
+            console.error(e);
+            alert(e.message)
+        }
+    }
+    setup()
+</script>
+
+<style>
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #form {
+        height: 100vh;
+        width: 100vw;
+        box-sizing: border-box;
+        position: absolute;
+        display: grid;
+        grid-template-areas:
+                "codelabel help preview  preview"
+                "code code preview  preview"
+                "theme theme rate  buttons ";
+        grid-template-columns:auto auto  1fr auto;
+        grid-template-rows:auto 1fr auto ;
+        gap:20px; 
+    }
+
+#codelabel{grid-area: codelabel;}
+#help{grid-area: help; text-align: right}
+#code{grid-area: code;resize: horizontal; min-width: 200px;}
+#theme{grid-area: theme;}
+#preview{grid-area: preview;}
+#buttons{grid-area: buttons; }
+#rate{grid-area: rate;}
+
+
+
+</style>
+</body>
 </html>
 
 
