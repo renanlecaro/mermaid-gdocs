@@ -161,6 +161,16 @@
         renderPreview()
     });
 
+    byId('code').addEventListener('keydown', (e) => {
+        if (e.key === "Tab" && e.shiftKey) {
+            e.preventDefault();
+            const { selectionStart, selectionEnd, value } = e.target;
+            const newValue = value.substring(0, selectionStart) + '    ' + value.substring(selectionEnd);
+            const newCursorPosition = selectionStart + 4;
+            e.target.value = newValue;
+            e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+        }
+    });
 
     function applyChanges(lastCorrectCode, theme, base64, width, height) {
         console.log(lastCorrectCode, base64);
