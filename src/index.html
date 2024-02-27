@@ -162,7 +162,7 @@
     });
 
     byId('code').addEventListener('keydown', (e) => {
-        if (e.key === "Tab" && e.shiftKey) {
+        if (e.key === "Tab") {
             e.preventDefault();
             const { selectionStart, selectionEnd, value } = e.target;
             const newValue = value.substring(0, selectionStart) + '    ' + value.substring(selectionEnd);
