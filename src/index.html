@@ -208,6 +208,69 @@
         }
     }
     setup()
+
+
+      function supportTabIndentation(textarea) {
+        const offsetToLineAndOffset = (lines, offset) => {
+            let line = 0
+            while (offset > lines[line].length && line < lines.length - 1) {
+                offset = offset - lines[line].length - 1
+                line++
+            }
+            return {line, offset}
+        }
+        const LineAndOffsetToOffset = (lines, line, offset) => {
+            for (let i = 0; i < line; i++)
+                offset += lines[i].length + 1
+
+            return offset
+        }
+
+        textarea.addEventListener('keydown', e => {
+            if (e.key == 'Tab') {
+                e.preventDefault()
+                const lines = e.target.value.split('\n')
+
+                const selection = [offsetToLineAndOffset(lines, textarea.selectionStart),
+                    offsetToLineAndOffset(lines, textarea.selectionEnd)]
+                for (var l = selection[0].line; l <= selection[1].line; l++) {
+                    const originalLength = lines[l].length
+                    if (e.shiftKey) {
+                        lines[l] = lines[l].replace(/^ {0,4}/, '')
+                    } else {
+                        lines[l] = '    ' + lines[l]
+                    }
+                    // How much the line moved
+                    const delta = lines[l].length - originalLength
+                    // Update the user selection if it's on this line
+                    selection.forEach((sel) => {
+                        if (sel.line == l) {
+                            sel.offset = Math.max(0, sel.offset + delta)
+                        }
+                    })
+                }
+                textarea.value = lines.join('\n')
+                textarea.selectionStart = LineAndOffsetToOffset(lines, selection[0].line, selection[0].offset)
+                textarea.selectionEnd = LineAndOffsetToOffset(lines, selection[1].line, selection[1].offset)
+            }
+            if(e.key==='Enter'){
+                const {selectionStart, selectionEnd, value}= textarea
+
+                const linesBeforeCursor=value.slice(0,selectionStart).split('\n')
+                const lastLine=linesBeforeCursor[linesBeforeCursor.length-1]
+                const indentation=lastLine.match(/^\s+/)?.[0] || ''
+
+                textarea.value=value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd)
+                textarea.selectionStart=selectionStart+1+indentation.length
+                textarea.selectionEnd=textarea.selectionStart
+
+                e.preventDefault()
+            }
+        })
+    }
+
+    supportTabIndentation(document.getElementById('code'))
+
 </script>
 
 <style>
@@ -237,7 +300,12 @@
 #help{grid-area: help; text-align: right}
 #code{grid-area: code;resize: horizontal; min-width: 200px; font-family: monospace;}
 #theme{grid-area: theme;}
-#preview{grid-area: preview;}
+#preview{
+    grid-area: preview;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 #buttons{grid-area: buttons; }
 #rate{grid-area: rate;}
 
