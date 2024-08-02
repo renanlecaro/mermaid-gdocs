@@ -226,6 +226,15 @@
             return offset
         }
 
+        function setContentWhileKeepingUndoStack(text){
+
+                // textarea.value = lines.join('\n')
+                  // focus and "type" the next number
+                  textarea.focus();
+                  document.execCommand('selectAll');
+                  document.execCommand('insertText', false, text);
+        }
+
         textarea.addEventListener('keydown', e => {
             if (e.key == 'Tab') {
                 e.preventDefault()
@@ -249,7 +258,9 @@
                         }
                     })
                 }
-                textarea.value = lines.join('\n')
+
+
+                setContentWhileKeepingUndoStack(lines.join('\n'))
                 textarea.selectionStart = LineAndOffsetToOffset(lines, selection[0].line, selection[0].offset)
                 textarea.selectionEnd = LineAndOffsetToOffset(lines, selection[1].line, selection[1].offset)
             }
@@ -260,7 +271,7 @@
                 const lastLine=linesBeforeCursor[linesBeforeCursor.length-1]
                 const indentation=lastLine.match(/^\s+/)?.[0] || ''
 
-                textarea.value=value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd)
+                setContentWhileKeepingUndoStack(value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd)) 
                 textarea.selectionStart=selectionStart+1+indentation.length
                 textarea.selectionEnd=textarea.selectionStart
 
