@@ -53,7 +53,8 @@
     } 
     
     function svgAsPng(mySVG, cb) {
-            const superScaling = 2;
+
+
             var can = document.createElement('canvas'), // Not shown on page
                 ctx = can.getContext('2d'),
                 loader = new Image(); // Not shown on page
@@ -62,6 +63,8 @@
 
             let width = parseInt(vb[2]),
                 height = parseInt(vb[3]);
+
+            const superScaling = width*height>500*500? 1:2;
 
             if (!width || !height) {
                 let bound = mySVG.getBoundingClientRect();
@@ -167,7 +170,13 @@
 
         if (!window.google) return window.open(base64);
         window.google.script.run
-            .withFailureHandler(msg => alert(msg))
+            .withFailureHandler(msg =>
+              alert(
+                  msg+'\n\n'+
+                '"Invalid image data" means the resulting image is too big, try to split up the chart\n'+
+                '"Authorization is required" means your should log out of all other google accounts.'
+              )
+            )
             .withSuccessHandler(() => google.script.host.close())
             .withUserObject(this)
             .insertImage(lastCorrectCode,theme,  base64, width, height);
@@ -187,7 +196,7 @@
             if (buttonLabel) {
                 byId('submit').innerText = buttonLabel;
             }
-          
+
             const source=window.graphDataFromGoogle?.source || ''
             theme=window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
 
@@ -201,7 +210,7 @@
                 startOnLoad: false,
                 theme,
             });
- 
+
         } catch (e) {
             console.error(e);
             alert(e.message)
@@ -271,7 +280,7 @@
                 const lastLine=linesBeforeCursor[linesBeforeCursor.length-1]
                 const indentation=lastLine.match(/^\s+/)?.[0] || ''
 
-                setContentWhileKeepingUndoStack(value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd)) 
+                setContentWhileKeepingUndoStack(value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd))
                 textarea.selectionStart=selectionStart+1+indentation.length
                 textarea.selectionEnd=textarea.selectionStart
 
