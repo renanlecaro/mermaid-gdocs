@@ -5,16 +5,13 @@
 # known limitations
 
 - only inline images work in google docs
-- google slide not supported
 - icons (fontawesome) not supported
-- seems to bug with google chrome on mac
 
 # Development setup
 
 To test the editor ui outside of google docs, serve the src folder, for example `npx http-server src` and open http://127.0.0.1:8080 in your browser.
 
-`src/Code.gs` is a copy of what's running in apps script, same for  `src/appsscript.json`. 
-
+`src/Code.gs` is a copy of what's running in apps script, same for  `src/appsscript.json`.  
 
 # License : MIT
 

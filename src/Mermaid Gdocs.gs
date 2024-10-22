@@ -11,9 +11,10 @@ function onOpen() {
       .addItem('New chart', 'addNewChart')
       .addItem('Edit selected chart', 'editSelectedChart')
       .addToUi();
+
 }
 
- 
+
 function addNewChart(){
   var selected=findSelectedImage()
   if(selected){
@@ -22,7 +23,7 @@ function addNewChart(){
     openDialog("graph LR\n  A -->B", 'Insert',"")
   }
 }
-  
+
 
 function editSelectedChart(){
   var selected=findSelectedImage()
