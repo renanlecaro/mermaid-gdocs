@@ -3,38 +3,50 @@
 <head>
     <base target="_top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-    
-    <title>Mermaid google slides</title>
-
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
-
+    <title>Mermaid</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.js"></script>
 </head>
 <body>
 <form id="form">
-
-        <label for="code" id="codelabel">Source code of your graph</label>
-        <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
-        <textarea id="code"></textarea>
-        <select id="theme" >
-            <option value="default">default theme</option>
-            <option value="forest">Forest theme</option>
-            <option value="dark">dark theme</option>
-            <option value="neutral">neutral theme</option>
-        </select>
-
-        <pre id="preview"></pre>
-        <div class="buttons">
-            <button id="cancel">Cancel</button>
-            <button class="action" type="submit" id="submit">Insert</button>
-        </div>
-
-        <a id="rate" href="https://workspace.google.com/marketplace/app/mermaid/636321283856" target="_blank">Please rate this plugin</a>
+    <label for="editor" id="codelabel">Source code of your graph</label>
+    <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
+    <div class="editor-container">
+        <div id="editor"></div>
+    </div>
+    <select id="theme">
+        <option value="default">default theme</option>
+        <option value="forest">Forest theme</option>
+        <option value="dark">dark theme</option>
+        <option value="neutral">neutral theme</option>
+    </select>
+    <pre id="preview"></pre>
+    <div class="buttons">
+        <button id="cancel">Cancel</button>
+        <button class="action" type="submit" id="submit">Insert</button>
+    </div>
+    <a id="rate" href="https://workspace.google.com/marketplace/app/mermaid/636321283856" target="_blank">Please rate this plugin</a>
 </form>
-
 
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
 
+    const defaultContent = `graph LR
+      A[Hard edge] -->|Link text| B(Round edge)
+      B --> C{Decision}
+      C -->|One| D[Result one]
+      C -->|Two| E[Result two]
+    `;
+
+    let theme = '';
+    let firstRenderWidth = 0;
+    let editor;
+
+    function byId(id) {
+        let res = document.getElementById(id);
+        if (!res) console.log('no result for id ' + id);
+        return res;
+    }
 
     function debounce(func, wait, immediate) {
         var timeout;
@@ -52,52 +64,7 @@
         };
     }
 
-    function svgAsPng(mySVG, cb) {
-
-
-            var can = document.createElement('canvas'), // Not shown on page
-                ctx = can.getContext('2d'),
-                loader = new Image(); // Not shown on page
-
-            const vb = mySVG.getAttribute('viewBox').split(' ');
-
-            let width = parseInt(vb[2]),
-                height = parseInt(vb[3]);
-
-            const superScaling = width*height>500*500? 1:2;
-
-            if (!width || !height) {
-                let bound = mySVG.getBoundingClientRect();
-                width = bound.width;
-                height = bound.height;
-            }
-
-            mySVG.setAttribute('width', width);
-            mySVG.setAttribute('height', height);
-
-            loader.width = can.width = width * superScaling;
-            loader.height = can.height = height * superScaling;
-            loader.onload = function () {
-                ctx.drawImage(loader, 0, 0, loader.width, loader.height);
-                cb(can.toDataURL(), width, height);
-            };
-            var svgAsXML = new XMLSerializer().serializeToString(mySVG);
-            loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
-        }
-
-
-    function byId(id) {
-        let res = document.getElementById(id);
-        if (!res) console.log('no result for id ' + id);
-        return res;
-    }
-
-    let theme = '';
-    let firstRenderWidth=0
-    const renderPreview = debounce(async function () {
-
-        var source = byId('code').value.trim();
-        var oldHTML = byId('preview').innerHTML;
+    async function renderPreview(source) {
         try {
             await mermaid.parse(source);
             byId('preview').setAttribute('data-processed', '');
@@ -109,91 +76,86 @@
             });
             await mermaid.init(undefined, byId('preview'));
             if(!firstRenderWidth){
-              const svg=document.getElementsByTagName('svg')[0]
-              firstRenderWidth=svg?.getBoundingClientRect().width
+                const svg = document.getElementsByTagName('svg')[0];
+                firstRenderWidth = svg?.getBoundingClientRect().width;
             }
 
-            byId('code').style.border = '';
-            byId('submit').disabled = false
+            byId('submit').disabled = false;
         } catch (e) {
+            const errorInfo = document.createElement('code');
+            errorInfo.innerText = e.message;
 
-            const errorInfo = document.createElement('code')
-            errorInfo.innerText = e.message
-
-            byId('preview').innerHTML = ''
-            byId('preview').appendChild(errorInfo)
-
-            byId('code').style.border = '1px solid red';
-            byId('submit').disabled = true
-
+            byId('preview').innerHTML = '';
+            byId('preview').appendChild(errorInfo);
+            byId('submit').disabled = true;
         }
-    }, 100);
-
-    const defaultContent = `graph LR
-      A[Hard edge] -->|Link text| B(Round edge)
-      B --> C{Decision}
-      C -->|One| D[Result one]
-      C -->|Two| E[Result two]
-  `;
-
-    function setCode(source) {
-        byId('code').value = source || defaultContent;
-        renderPreview();
     }
 
+    function svgAsPng(mySVG, cb) {
+        var can = document.createElement('canvas'),
+            ctx = can.getContext('2d'),
+            loader = new Image();
+
+        const vb = mySVG.getAttribute('viewBox').split(' ');
+
+        let width = parseInt(vb[2]),
+            height = parseInt(vb[3]);
+
+        const superScaling = width*height>500*500? 1:2;
+
+        if (!width || !height) {
+            let bound = mySVG.getBoundingClientRect();
+            width = bound.width;
+            height = bound.height;
+        }
+
+        mySVG.setAttribute('width', width);
+        mySVG.setAttribute('height', height);
+
+        loader.width = can.width = width * superScaling;
+        loader.height = can.height = height * superScaling;
+        loader.onload = function () {
+            ctx.drawImage(loader, 0, 0, loader.width, loader.height);
+            cb(can.toDataURL(), width, height);
+        };
+        var svgAsXML = new XMLSerializer().serializeToString(mySVG);
+        loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
+    }
 
     function submitGraph(e) {
         e.preventDefault();
-        byId('submit').disabled = true
-        byId('code').disabled = true
-        byId('theme').disabled = true
-        byId('cancel').disabled = true
-
-        byId('form').removeEventListener('submit', submitGraph);
+        byId('submit').disabled = true;
+        byId('theme').disabled = true;
+        byId('cancel').disabled = true;
 
         let svg = document.getElementsByTagName('svg')[0];
+        const code = editor.getValue();
         svgAsPng(svg, (base64, width, height) => {
-            applyChanges( svg, byId('code').value, theme, base64, width, height);
+            applyChanges(svg, code, theme, base64, width, height);
         });
     }
 
-    byId('cancel').addEventListener('click', e => {
-        e.preventDefault();
-        cancelEdit();
-    });
-
-    byId('theme').addEventListener('change', e => {
-        theme = e.target.value;
-        localStorage.setItem('favorite-theme', theme)
-        renderPreview()
-    });
-
-
-    function applyChanges(svg,lastCorrectCode, theme, base64, width, height) {
-        console.log(lastCorrectCode, base64);
-
+    function applyChanges(svg, lastCorrectCode, theme, base64, width, height) {
         if (!window.google) return window.open(base64);
 
-
-        let svgSize = svg.getBoundingClientRect()
+        let svgSize = svg.getBoundingClientRect();
         if(window.graphDataFromGoogle?.currentWidth && firstRenderWidth){
-          const ratio = window.graphDataFromGoogle?.currentWidth /firstRenderWidth
-          width *=ratio
-          height *=ratio
+            const ratio = window.graphDataFromGoogle?.currentWidth /firstRenderWidth;
+            width *=ratio;
+            height *=ratio;
         }
-
 
         window.google.script.run
             .withFailureHandler(msg =>
-              alert(
-                  msg+'\n\n'+
-                '"Invalid image data" means the resulting image is too big, try to split up the chart\n'+
-                '"Authorization is required" means your should log out of all other google accounts.'
-              )
+                alert(
+                    msg+'\n\n'+
+                    '"Invalid image data" means the resulting image is too big, try to split up the chart\n'+
+                    '"Authorization is required" means your should log out of all other google accounts.'
+                )
             )
             .withSuccessHandler(() => google.script.host.close())
             .withUserObject(this)
-            .insertImage(lastCorrectCode,theme,  base64, width, height);
+            .insertImage(lastCorrectCode, theme, base64, width, height);
     }
 
     function cancelEdit() {
@@ -201,115 +163,99 @@
         google.script.host.close();
     }
 
-    function setup(){
-        try {
+    async function initializeMermaid() {
+        await mermaid.initialize({
+            startOnLoad: false,
+            theme: theme || 'default',
+        });
+    }
 
-            const buttonLabel=window.graphDataFromGoogle?.label
+    function setupEventListeners() {
+        byId('form').addEventListener('submit', submitGraph);
+        
+        byId('cancel').addEventListener('click', e => {
+            e.preventDefault();
+            cancelEdit();
+        });
+
+        byId('theme').addEventListener('change', e => {
+            theme = e.target.value;
+            localStorage.setItem('favorite-theme', theme);
+            renderPreview(editor.getValue());
+        });
+    }
+
+    async function setup() {
+        try {
+            // Initialize theme
+            theme = window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default';
+            byId('theme').value = theme;
+
+            // Initialize Mermaid
+            await initializeMermaid();
+
+            // Set up Monaco
+            require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+                // Register Mermaid language
+                monaco.languages.register({ id: 'mermaid' });
+                monaco.languages.setMonarchTokensProvider('mermaid', {
+                    tokenizer: {
+                        root: [
+                            [/graph|sequenceDiagram|classDiagram|stateDiagram/, "keyword"],
+                            [/\[|\]|\(|\)|\{|\}/, "bracket"],
+                            [/-->|---|==>|->/, "arrow"],
+                            [/".*?"/, "string"],
+                            [/\|.*?\|/, "label"],
+                        ]
+                    }
+                });
+
+                // Create Monaco editor
+                editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: window.graphDataFromGoogle?.source || defaultContent,
+                    language: 'mermaid',
+                    minimap: { enabled: false },
+                    lineNumbers: 'on',
+                    theme: 'vs',
+                    fontSize: 14,
+                    automaticLayout: true
+                });
+
+                // Add this after editor creation
+                const container = document.querySelector('.editor-container');
+                container.addEventListener('mouseup', () => {
+                    editor.layout(); // Ensures editor redraws properly after resize
+                });
+
+                // Set up change listener for preview
+                editor.onDidChangeModelContent(debounce(() => {
+                    renderPreview(editor.getValue());
+                }, 100));
+
+                // Initial preview render
+                renderPreview(editor.getValue());
+            });
+
+            setupEventListeners();
+
+            const buttonLabel = window.graphDataFromGoogle?.label;
             if (buttonLabel) {
                 byId('submit').innerText = buttonLabel;
             }
 
-            const source=window.graphDataFromGoogle?.source || ''
-            theme=window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
-
-            byId('theme').value = theme
-            setCode(source);
-
-            byId('code').addEventListener('keyup', () => renderPreview());
-            byId('form').addEventListener('submit', submitGraph);
-
-            mermaid.initialize({
-                startOnLoad: false,
-                theme,
-            });
-
-
-
         } catch (e) {
             console.error(e);
-            alert(e.message)
+            alert(e.message);
         }
     }
-    setup()
 
-
-      function supportTabIndentation(textarea) {
-        const offsetToLineAndOffset = (lines, offset) => {
-            let line = 0
-            while (offset > lines[line].length && line < lines.length - 1) {
-                offset = offset - lines[line].length - 1
-                line++
-            }
-            return {line, offset}
-        }
-        const LineAndOffsetToOffset = (lines, line, offset) => {
-            for (let i = 0; i < line; i++)
-                offset += lines[i].length + 1
-
-            return offset
-        }
-
-        function setContentWhileKeepingUndoStack(text){
-
-                // textarea.value = lines.join('\n')
-                  // focus and "type" the next number
-                  textarea.focus();
-                  document.execCommand('selectAll');
-                  document.execCommand('insertText', false, text);
-        }
-
-        textarea.addEventListener('keydown', e => {
-            if (e.key == 'Tab') {
-                e.preventDefault()
-                const lines = e.target.value.split('\n')
-
-                const selection = [offsetToLineAndOffset(lines, textarea.selectionStart),
-                    offsetToLineAndOffset(lines, textarea.selectionEnd)]
-                for (var l = selection[0].line; l <= selection[1].line; l++) {
-                    const originalLength = lines[l].length
-                    if (e.shiftKey) {
-                        lines[l] = lines[l].replace(/^ {0,4}/, '')
-                    } else {
-                        lines[l] = '    ' + lines[l]
-                    }
-                    // How much the line moved
-                    const delta = lines[l].length - originalLength
-                    // Update the user selection if it's on this line
-                    selection.forEach((sel) => {
-                        if (sel.line == l) {
-                            sel.offset = Math.max(0, sel.offset + delta)
-                        }
-                    })
-                }
-
-
-                setContentWhileKeepingUndoStack(lines.join('\n'))
-                textarea.selectionStart = LineAndOffsetToOffset(lines, selection[0].line, selection[0].offset)
-                textarea.selectionEnd = LineAndOffsetToOffset(lines, selection[1].line, selection[1].offset)
-            }
-            if(e.key==='Enter'){
-                const {selectionStart, selectionEnd, value}= textarea
-
-                const linesBeforeCursor=value.slice(0,selectionStart).split('\n')
-                const lastLine=linesBeforeCursor[linesBeforeCursor.length-1]
-                const indentation=lastLine.match(/^\s+/)?.[0] || ''
-
-                setContentWhileKeepingUndoStack(value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd))
-                textarea.selectionStart=selectionStart+1+indentation.length
-                textarea.selectionEnd=textarea.selectionStart
-
-                e.preventDefault()
-            }
-        })
-    }
-
-    supportTabIndentation(document.getElementById('code'))
-
+    // Start setup
+    setup();
 </script>
 
 <style>
-    html,
-    body {
+    html, body {
         padding: 0;
         margin: 0;
         overflow: hidden;
@@ -322,32 +268,42 @@
         position: absolute;
         display: grid;
         grid-template-areas:
-                "codelabel help preview  preview"
-                "code code preview  preview"
-                "theme theme rate  buttons ";
-        grid-template-columns:auto auto  1fr auto;
-        grid-template-rows:auto 1fr auto ;
-        gap:20px;
+            "codelabel help preview  preview"
+            "editor editor preview  preview"
+            "theme theme rate  buttons";
+        grid-template-columns: auto auto 1fr auto;
+        grid-template-rows: auto 1fr auto;
+        gap: 20px;
     }
 
-#codelabel{grid-area: codelabel;}
-#help{grid-area: help; text-align: right}
-#code{grid-area: code;resize: horizontal; min-width: 200px; font-family: monospace;}
-#theme{grid-area: theme;}
-#preview{
-    grid-area: preview;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-      overflow: scroll;
-}
-#buttons{grid-area: buttons; }
-#rate{grid-area: rate;}
+    #codelabel { grid-area: codelabel; }
+    #help { grid-area: help; text-align: right; }
+    .editor-container {
+        grid-area: editor;
+        min-width: 350px;
+        border: 1px solid #ccc;
+        resize: horizontal;
+        overflow: auto;
+        padding-bottom: 5px;
+        height: 100%; /* Take full height of grid cell */
+        display: flex; /* Use flexbox to allow child to expand */
+        flex-direction: column; /* Stack children vertically */
+    }
 
-
-
+    #editor {
+        flex: 1; /* Take remaining space */
+        min-height: 300px;
+    }
+    #theme { grid-area: theme; }
+    #preview {
+        grid-area: preview;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: scroll;
+    }
+    #buttons { grid-area: buttons; }
+    #rate { grid-area: rate; }
 </style>
 </body>
 </html>
-
-
