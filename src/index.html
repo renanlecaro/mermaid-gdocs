@@ -3,32 +3,34 @@
 <head>
     <base target="_top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-    
+
     <title>Mermaid google slides</title>
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
 
 </head>
 <body>
 <form id="form">
 
-        <label for="code" id="codelabel">Source code of your graph</label>
-        <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
-        <textarea id="code"></textarea>
-        <select id="theme" >
-            <option value="default">default theme</option>
-            <option value="forest">Forest theme</option>
-            <option value="dark">dark theme</option>
-            <option value="neutral">neutral theme</option>
-        </select>
+    <label for="code" id="codelabel">Source code of your graph</label>
+    <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
+    <textarea id="code"></textarea>
+    <select id="theme">
+        <option value="default">default theme</option>
+        <option value="forest">Forest theme</option>
+        <option value="dark">dark theme</option>
+        <option value="neutral">neutral theme</option>
+    </select>
 
-        <pre id="preview"></pre>
-        <div class="buttons">
-            <button id="cancel">Cancel</button>
-            <button class="action" type="submit" id="submit">Insert</button>
-        </div>
+    <pre id="preview"></pre>
+    <div class="buttons">
+        <button id="cancel">Cancel</button>
+        <button class="action" type="submit" id="submit">Insert</button>
+    </div>
 
-        <a id="rate" href="https://workspace.google.com/marketplace/app/mermaid/636321283856" target="_blank">Please rate this plugin</a>
+    <a id="rate" href="https://workspace.google.com/marketplace/app/mermaid/636321283856" target="_blank">Please rate
+        this plugin</a>
 </form>
 
 
@@ -55,35 +57,35 @@
     function svgAsPng(mySVG, cb) {
 
 
-            var can = document.createElement('canvas'), // Not shown on page
-                ctx = can.getContext('2d'),
-                loader = new Image(); // Not shown on page
+        var can = document.createElement('canvas'), // Not shown on page
+            ctx = can.getContext('2d'),
+            loader = new Image(); // Not shown on page
 
-            const vb = mySVG.getAttribute('viewBox').split(' ');
+        const vb = mySVG.getAttribute('viewBox').split(' ');
 
-            let width = parseInt(vb[2]),
-                height = parseInt(vb[3]);
+        let width = parseInt(vb[2]),
+            height = parseInt(vb[3]);
 
-            const superScaling = width*height>500*500? 1:2;
+        const superScaling = width * height > 500 * 500 ? 1 : 2;
 
-            if (!width || !height) {
-                let bound = mySVG.getBoundingClientRect();
-                width = bound.width;
-                height = bound.height;
-            }
-
-            mySVG.setAttribute('width', width);
-            mySVG.setAttribute('height', height);
-
-            loader.width = can.width = width * superScaling;
-            loader.height = can.height = height * superScaling;
-            loader.onload = function () {
-                ctx.drawImage(loader, 0, 0, loader.width, loader.height);
-                cb(can.toDataURL(), width, height);
-            };
-            var svgAsXML = new XMLSerializer().serializeToString(mySVG);
-            loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
+        if (!width || !height) {
+            let bound = mySVG.getBoundingClientRect();
+            width = bound.width;
+            height = bound.height;
         }
+
+        mySVG.setAttribute('width', width);
+        mySVG.setAttribute('height', height);
+
+        loader.width = can.width = width * superScaling;
+        loader.height = can.height = height * superScaling;
+        loader.onload = function () {
+            ctx.drawImage(loader, 0, 0, loader.width, loader.height);
+            cb(can.toDataURL(), width, height);
+        };
+        var svgAsXML = new XMLSerializer().serializeToString(mySVG);
+        loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
+    }
 
 
     function byId(id) {
@@ -93,7 +95,7 @@
     }
 
     let theme = '';
-    let firstRenderWidth=0
+    let firstRenderWidth = 0
     const renderPreview = debounce(async function () {
 
         var source = byId('code').value.trim();
@@ -108,9 +110,9 @@
                 theme,
             });
             await mermaid.init(undefined, byId('preview'));
-            if(!firstRenderWidth){
-              const svg=document.getElementsByTagName('svg')[0]
-              firstRenderWidth=svg?.getBoundingClientRect().width
+            if (!firstRenderWidth) {
+                const svg = document.getElementsByTagName('svg')[0]
+                firstRenderWidth = svg?.getBoundingClientRect().width
             }
 
             byId('code').style.border = '';
@@ -153,7 +155,7 @@
 
         let svg = document.getElementsByTagName('svg')[0];
         svgAsPng(svg, (base64, width, height) => {
-            applyChanges( svg, byId('code').value, theme, base64, width, height);
+            applyChanges(svg, byId('code').value, theme, base64, width, height);
         });
     }
 
@@ -169,31 +171,31 @@
     });
 
 
-    function applyChanges(svg,lastCorrectCode, theme, base64, width, height) {
+    function applyChanges(svg, lastCorrectCode, theme, base64, width, height) {
         console.log(lastCorrectCode, base64);
 
         if (!window.google) return window.open(base64);
 
 
         let svgSize = svg.getBoundingClientRect()
-        if(window.graphDataFromGoogle?.currentWidth && firstRenderWidth){
-          const ratio = window.graphDataFromGoogle?.currentWidth /firstRenderWidth
-          width *=ratio
-          height *=ratio
+        if (window.graphDataFromGoogle?.currentWidth && firstRenderWidth) {
+            const ratio = window.graphDataFromGoogle?.currentWidth / firstRenderWidth
+            width *= ratio
+            height *= ratio
         }
 
 
         window.google.script.run
             .withFailureHandler(msg =>
-              alert(
-                  msg+'\n\n'+
-                '"Invalid image data" means the resulting image is too big, try to split up the chart\n'+
-                '"Authorization is required" means your should log out of all other google accounts.'
-              )
+                alert(
+                    msg + '\n\n' +
+                    '"Invalid image data" means the resulting image is too big, try to split up the chart\n' +
+                    '"Authorization is required" means your should log out of all other google accounts.'
+                )
             )
             .withSuccessHandler(() => google.script.host.close())
             .withUserObject(this)
-            .insertImage(lastCorrectCode,theme,  base64, width, height);
+            .insertImage(lastCorrectCode, theme, base64, width, height);
     }
 
     function cancelEdit() {
@@ -201,16 +203,16 @@
         google.script.host.close();
     }
 
-    function setup(){
+    function setup() {
         try {
 
-            const buttonLabel=window.graphDataFromGoogle?.label
+            const buttonLabel = window.graphDataFromGoogle?.label
             if (buttonLabel) {
                 byId('submit').innerText = buttonLabel;
             }
 
-            const source=window.graphDataFromGoogle?.source || ''
-            theme=window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
+            const source = window.graphDataFromGoogle?.source || ''
+            theme = window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
 
             byId('theme').value = theme
             setCode(source);
@@ -224,16 +226,16 @@
             });
 
 
-
         } catch (e) {
             console.error(e);
             alert(e.message)
         }
     }
+
     setup()
 
 
-      function supportTabIndentation(textarea) {
+    function supportTabIndentation(textarea) {
         const offsetToLineAndOffset = (lines, offset) => {
             let line = 0
             while (offset > lines[line].length && line < lines.length - 1) {
@@ -249,13 +251,13 @@
             return offset
         }
 
-        function setContentWhileKeepingUndoStack(text){
+        function setContentWhileKeepingUndoStack(text) {
 
-                // textarea.value = lines.join('\n')
-                  // focus and "type" the next number
-                  textarea.focus();
-                  document.execCommand('selectAll');
-                  document.execCommand('insertText', false, text);
+            // textarea.value = lines.join('\n')
+            // focus and "type" the next number
+            textarea.focus();
+            document.execCommand('selectAll');
+            document.execCommand('insertText', false, text);
         }
 
         textarea.addEventListener('keydown', e => {
@@ -287,16 +289,16 @@
                 textarea.selectionStart = LineAndOffsetToOffset(lines, selection[0].line, selection[0].offset)
                 textarea.selectionEnd = LineAndOffsetToOffset(lines, selection[1].line, selection[1].offset)
             }
-            if(e.key==='Enter'){
-                const {selectionStart, selectionEnd, value}= textarea
+            if (e.key === 'Enter') {
+                const {selectionStart, selectionEnd, value} = textarea
 
-                const linesBeforeCursor=value.slice(0,selectionStart).split('\n')
-                const lastLine=linesBeforeCursor[linesBeforeCursor.length-1]
-                const indentation=lastLine.match(/^\s+/)?.[0] || ''
+                const linesBeforeCursor = value.slice(0, selectionStart).split('\n')
+                const lastLine = linesBeforeCursor[linesBeforeCursor.length - 1]
+                const indentation = lastLine.match(/^\s+/)?.[0] || ''
 
-                setContentWhileKeepingUndoStack(value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd))
-                textarea.selectionStart=selectionStart+1+indentation.length
-                textarea.selectionEnd=textarea.selectionStart
+                setContentWhileKeepingUndoStack(value.slice(0, selectionStart) + '\n' + indentation + value.slice(selectionEnd))
+                textarea.selectionStart = selectionStart + 1 + indentation.length
+                textarea.selectionEnd = textarea.selectionStart
 
                 e.preventDefault()
             }
@@ -326,24 +328,45 @@
                 "code code preview  preview"
                 "theme theme rate  buttons ";
         grid-template-columns:auto auto  1fr auto;
-        grid-template-rows:auto 1fr auto ;
-        gap:20px;
+        grid-template-rows:auto 1fr auto;
+        gap: 20px;
     }
 
-#codelabel{grid-area: codelabel;}
-#help{grid-area: help; text-align: right}
-#code{grid-area: code;resize: horizontal; min-width: 200px; font-family: monospace;}
-#theme{grid-area: theme;}
-#preview{
-    grid-area: preview;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-      overflow: scroll;
-}
-#buttons{grid-area: buttons; }
-#rate{grid-area: rate;}
+    #codelabel {
+        grid-area: codelabel;
+    }
 
+    #help {
+        grid-area: help;
+        text-align: right
+    }
+
+    #code {
+        grid-area: code;
+        resize: horizontal;
+        min-width: 200px;
+        font-family: monospace;
+    }
+
+    #theme {
+        grid-area: theme;
+    }
+
+    #preview {
+        grid-area: preview;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: scroll;
+    }
+
+    #buttons {
+        grid-area: buttons;
+    }
+
+    #rate {
+        grid-area: rate;
+    }
 
 
 </style>
