@@ -4,38 +4,37 @@
     <base target="_top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
 
-    <title>Mermaid google slides</title>
+    <title>Mermaid google docs</title>
 
-    <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧜‍♀️</text></svg>">
 
 </head>
 <body>
 <form id="form">
 
-    <label for="code" id="codelabel">Source code of your graph</label>
-    <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
-    <textarea id="code"></textarea>
-    <select id="theme">
-        <option value="default">default theme</option>
-        <option value="forest">Forest theme</option>
-        <option value="dark">dark theme</option>
-        <option value="neutral">neutral theme</option>
-    </select>
+        <label for="code" id="codelabel">Source code of your graph</label>
+        <a id="help" href="https://mermaid.js.org/intro/" target="_blank">Help</a>
+        <textarea id="code"></textarea>
+        <select id="theme" >
+            <option value="default">default theme</option>
+            <option value="forest">Forest theme</option>
+            <option value="dark">dark theme</option>
+            <option value="neutral">neutral theme</option>
+        </select>
 
-    <pre id="preview"></pre>
-    <div class="buttons">
-        <button id="cancel">Cancel</button>
-        <button class="action" type="submit" id="submit">Insert</button>
-    </div>
+        <pre id="preview"></pre>
+        <div class="buttons">
+            <button id="cancel">Cancel</button>
+            <button class="action" type="submit" id="submit">Insert</button>
+        </div>
+<div id="info">
 
-    <a id="rate" href="https://workspace.google.com/marketplace/app/mermaid/636321283856" target="_blank">Please rate
-        this plugin</a>
+</div>
 </form>
 
 
 <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 
 
     function debounce(func, wait, immediate) {
@@ -54,38 +53,36 @@
         };
     }
 
+    function getScaling(mySVG){
+
+            const {width,height}=mySVG.getBoundingClientRect()
+            const maxDim = Math.max(width,height)
+             const targetDim = Math.min(maxDim*2, 1600)
+            const superScaling = targetDim / maxDim;
+            return {width,height,superScaling}
+    }
+
     function svgAsPng(mySVG, cb) {
 
+            var can = document.createElement('canvas'), // Not shown on page
+                ctx = can.getContext('2d'),
+                loader = new Image(); // Not shown on page
 
-        var can = document.createElement('canvas'), // Not shown on page
-            ctx = can.getContext('2d'),
-            loader = new Image(); // Not shown on page
+            const {width,height,superScaling} = getScaling(mySVG)
+        mySVG.setAttribute('width', width)
+        mySVG.setAttribute('height', height)
 
-        const vb = mySVG.getAttribute('viewBox').split(' ');
+            can.width = Math.round(width * superScaling);
+            can.height = Math.round(height * superScaling);
+            loader.onload = function () {
+                // console.log('image loaded',loader, 0, 0, loader.width, loader.height, 0,0,can.width,can.height)
 
-        let width = parseInt(vb[2]),
-            height = parseInt(vb[3]);
-
-        const superScaling = width * height > 500 * 500 ? 1 : 2;
-
-        if (!width || !height) {
-            let bound = mySVG.getBoundingClientRect();
-            width = bound.width;
-            height = bound.height;
+                ctx.drawImage(loader, 0, 0, loader.width, loader.height, 0,0,can.width,can.height);
+                cb(can.toDataURL(), width, height);
+            };
+            var svgAsXML = new XMLSerializer().serializeToString(mySVG);
+            loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
         }
-
-        mySVG.setAttribute('width', width);
-        mySVG.setAttribute('height', height);
-
-        loader.width = can.width = width * superScaling;
-        loader.height = can.height = height * superScaling;
-        loader.onload = function () {
-            ctx.drawImage(loader, 0, 0, loader.width, loader.height);
-            cb(can.toDataURL(), width, height);
-        };
-        var svgAsXML = new XMLSerializer().serializeToString(mySVG);
-        loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
-    }
 
 
     function byId(id) {
@@ -95,11 +92,11 @@
     }
 
     let theme = '';
-    let firstRenderWidth = 0
+    let firstRenderWidth=0
     const renderPreview = debounce(async function () {
 
         var source = byId('code').value.trim();
-        var oldHTML = byId('preview').innerHTML;
+
         try {
             await mermaid.parse(source);
             byId('preview').setAttribute('data-processed', '');
@@ -110,13 +107,42 @@
                 theme,
             });
             await mermaid.init(undefined, byId('preview'));
-            if (!firstRenderWidth) {
-                const svg = document.getElementsByTagName('svg')[0]
-                firstRenderWidth = svg?.getBoundingClientRect().width
+            const svg=document.getElementsByTagName('svg')[0]
+            // It's quite odd, the max width must be set by mermaid, and interacts oddly with display grid in ff
+            if(svg.style.maxWidth){
+                svg.style.width=svg.style.maxWidth
             }
 
+
+            byId('preview').style.paddingLeft=Math.round(Math.max(0, (byId('preview').getBoundingClientRect().width -svg.getBoundingClientRect().width)/2 ))+'px'
+            byId('preview').style.paddingTop=Math.round(Math.max(0, (byId('preview').getBoundingClientRect().height -svg.getBoundingClientRect().height)/2 ))+'px';
+
+
+            if(!firstRenderWidth){
+              firstRenderWidth=svg.getBoundingClientRect().width
+            }
+
+            const {width,height,superScaling} = getScaling(svg)
+
+                byId('submit').disabled = false
+            if(superScaling>=1){
+                byId('info').innerHTML = `Your graph is ${Math.round(width)} x ${Math.round(height)} px. Google docs restricts width and height to 1600px `
+                byId('submit').textContent= 'Insert'
+                byId('submit').className= 'blue'
+            }else{
+
+                byId('info').innerHTML = `Your graph is ${Math.round(Math.max(width,height))} pixels ${width>height?'wide':'high'}
+                and <b>cannot fit in a google doc</b>.Google will resize it and it will be blurry and unreadable.  Try changing the layout to something
+                more ${width>height?'vertical':'horizontal'} or make multiple smaller graphs.`
+
+                byId('submit').textContent= superScaling<1 ? 'Try anyway':'Insert'
+                byId('submit').className= superScaling<1 ? 'red':'blue'
+                byId('submit').disabled = false
+            }
+
+
+
             byId('code').style.border = '';
-            byId('submit').disabled = false
         } catch (e) {
 
             const errorInfo = document.createElement('code')
@@ -155,7 +181,7 @@
 
         let svg = document.getElementsByTagName('svg')[0];
         svgAsPng(svg, (base64, width, height) => {
-            applyChanges(svg, byId('code').value, theme, base64, width, height);
+            applyChanges( svg, byId('code').value, theme, base64, width, height);
         });
     }
 
@@ -171,31 +197,34 @@
     });
 
 
-    function applyChanges(svg, lastCorrectCode, theme, base64, width, height) {
+    function applyChanges(svg,lastCorrectCode, theme, base64, width, height) {
         console.log(lastCorrectCode, base64);
 
-        if (!window.google) return window.open(base64);
+        if (!window.google) {
+            byId('preview').innerHTML=`<img alt="" src="${base64}"/>`
+            // window.open(base64);
+            return
+        }
 
 
-        let svgSize = svg.getBoundingClientRect()
-        if (window.graphDataFromGoogle?.currentWidth && firstRenderWidth) {
-            const ratio = window.graphDataFromGoogle?.currentWidth / firstRenderWidth
-            width *= ratio
-            height *= ratio
+        if(window.graphDataFromGoogle?.currentWidth && firstRenderWidth){
+          const ratio = window.graphDataFromGoogle?.currentWidth /firstRenderWidth
+          width *=ratio
+          height *=ratio
         }
 
 
         window.google.script.run
             .withFailureHandler(msg =>
-                alert(
-                    msg + '\n\n' +
-                    '"Invalid image data" means the resulting image is too big, try to split up the chart\n' +
-                    '"Authorization is required" means your should log out of all other google accounts.'
-                )
+              alert(
+                  msg+'\n\n'+
+                '"Invalid image data" means the resulting image is too big, try to split up the chart\n'+
+                '"Authorization is required" means your should log out of all other google accounts.'
+              )
             )
             .withSuccessHandler(() => google.script.host.close())
             .withUserObject(this)
-            .insertImage(lastCorrectCode, theme, base64, width, height);
+            .insertImage(lastCorrectCode,theme,  base64, width, height);
     }
 
     function cancelEdit() {
@@ -203,16 +232,16 @@
         google.script.host.close();
     }
 
-    function setup() {
+    function setup(){
         try {
 
-            const buttonLabel = window.graphDataFromGoogle?.label
+            const buttonLabel=window.graphDataFromGoogle?.label
             if (buttonLabel) {
                 byId('submit').innerText = buttonLabel;
             }
 
-            const source = window.graphDataFromGoogle?.source || ''
-            theme = window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
+            const source=window.graphDataFromGoogle?.source || ''
+            theme=window.graphDataFromGoogle?.theme || localStorage.getItem('favorite-theme') || 'default'
 
             byId('theme').value = theme
             setCode(source);
@@ -226,16 +255,16 @@
             });
 
 
+
         } catch (e) {
             console.error(e);
             alert(e.message)
         }
     }
-
     setup()
 
 
-    function supportTabIndentation(textarea) {
+      function supportTabIndentation(textarea) {
         const offsetToLineAndOffset = (lines, offset) => {
             let line = 0
             while (offset > lines[line].length && line < lines.length - 1) {
@@ -251,13 +280,13 @@
             return offset
         }
 
-        function setContentWhileKeepingUndoStack(text) {
+        function setContentWhileKeepingUndoStack(text){
 
-            // textarea.value = lines.join('\n')
-            // focus and "type" the next number
-            textarea.focus();
-            document.execCommand('selectAll');
-            document.execCommand('insertText', false, text);
+                // textarea.value = lines.join('\n')
+                  // focus and "type" the next number
+                  textarea.focus();
+                  document.execCommand('selectAll');
+                  document.execCommand('insertText', false, text);
         }
 
         textarea.addEventListener('keydown', e => {
@@ -289,16 +318,16 @@
                 textarea.selectionStart = LineAndOffsetToOffset(lines, selection[0].line, selection[0].offset)
                 textarea.selectionEnd = LineAndOffsetToOffset(lines, selection[1].line, selection[1].offset)
             }
-            if (e.key === 'Enter') {
-                const {selectionStart, selectionEnd, value} = textarea
+            if(e.key==='Enter'){
+                const {selectionStart, selectionEnd, value}= textarea
 
-                const linesBeforeCursor = value.slice(0, selectionStart).split('\n')
-                const lastLine = linesBeforeCursor[linesBeforeCursor.length - 1]
-                const indentation = lastLine.match(/^\s+/)?.[0] || ''
+                const linesBeforeCursor=value.slice(0,selectionStart).split('\n')
+                const lastLine=linesBeforeCursor[linesBeforeCursor.length-1]
+                const indentation=lastLine.match(/^\s+/)?.[0] || ''
 
-                setContentWhileKeepingUndoStack(value.slice(0, selectionStart) + '\n' + indentation + value.slice(selectionEnd))
-                textarea.selectionStart = selectionStart + 1 + indentation.length
-                textarea.selectionEnd = textarea.selectionStart
+                setContentWhileKeepingUndoStack(value.slice(0,selectionStart)+'\n'+indentation+value.slice(selectionEnd))
+                textarea.selectionStart=selectionStart+1+indentation.length
+                textarea.selectionEnd=textarea.selectionStart
 
                 e.preventDefault()
             }
@@ -326,47 +355,27 @@
         grid-template-areas:
                 "codelabel help preview  preview"
                 "code code preview  preview"
-                "theme theme rate  buttons ";
+                "theme theme info  buttons ";
         grid-template-columns:auto auto  1fr auto;
-        grid-template-rows:auto 1fr auto;
-        gap: 20px;
+        grid-template-rows:auto 1fr auto ;
+        gap:20px;
     }
 
-    #codelabel {
-        grid-area: codelabel;
-    }
+#codelabel{grid-area: codelabel;}
+#help{grid-area: help; text-align: right}
+#code{grid-area: code;resize: horizontal; min-width: 200px; font-family: monospace;}
+#theme{grid-area: theme;}
+#preview{
+    grid-area: preview;
+    overflow: scroll;
+}
+#preview code{
+    white-space: normal;
+}
 
-    #help {
-        grid-area: help;
-        text-align: right
-    }
+#buttons{grid-area: buttons; }
+#info{grid-area: info; opacity: 0.8}
 
-    #code {
-        grid-area: code;
-        resize: horizontal;
-        min-width: 200px;
-        font-family: monospace;
-    }
-
-    #theme {
-        grid-area: theme;
-    }
-
-    #preview {
-        grid-area: preview;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: scroll;
-    }
-
-    #buttons {
-        grid-area: buttons;
-    }
-
-    #rate {
-        grid-area: rate;
-    }
 
 
 </style>
