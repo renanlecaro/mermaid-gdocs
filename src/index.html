@@ -59,7 +59,14 @@
             const maxDim = Math.max(width,height)
              const targetDim = Math.min(maxDim*2, 1600)
             const superScaling = targetDim / maxDim;
-            return {width,height,superScaling}
+
+
+
+            return {width,height,superScaling,
+                // Size recommendation for the image in the doc
+                DocElWidth:width*Math.min(superScaling,1),
+                DocElHeight:height*Math.min(superScaling,1)
+            }
     }
 
     function svgAsPng(mySVG, cb) {
@@ -67,8 +74,7 @@
             var can = document.createElement('canvas'), // Not shown on page
                 ctx = can.getContext('2d'),
                 loader = new Image(); // Not shown on page
-
-            const {width,height,superScaling} = getScaling(mySVG)
+            const {width,height,superScaling, DocElWidth, DocElHeight} = getScaling(mySVG)
         mySVG.setAttribute('width', width)
         mySVG.setAttribute('height', height)
 
@@ -78,7 +84,8 @@
                 // console.log('image loaded',loader, 0, 0, loader.width, loader.height, 0,0,can.width,can.height)
 
                 ctx.drawImage(loader, 0, 0, loader.width, loader.height, 0,0,can.width,can.height);
-                cb(can.toDataURL(), width, height);
+
+                cb(can.toDataURL(), DocElWidth,DocElHeight);
             };
             var svgAsXML = new XMLSerializer().serializeToString(mySVG);
             loader.src = 'data:image/svg+xml,' + encodeURIComponent(svgAsXML);
@@ -118,11 +125,12 @@
             byId('preview').style.paddingTop=Math.round(Math.max(0, (byId('preview').getBoundingClientRect().height -svg.getBoundingClientRect().height)/2 ))+'px';
 
 
-            if(!firstRenderWidth){
-              firstRenderWidth=svg.getBoundingClientRect().width
-            }
 
-            const {width,height,superScaling} = getScaling(svg)
+            const {width,height,superScaling,DocElWidth} = getScaling(svg)
+
+            if(!firstRenderWidth){
+              firstRenderWidth=DocElWidth
+            }
 
                 byId('submit').disabled = false
             if(superScaling>=1){
@@ -132,7 +140,7 @@
             }else{
 
                 byId('info').innerHTML = `Your graph is ${Math.round(Math.max(width,height))} pixels ${width>height?'wide':'high'}
-                and <b>cannot fit in a google doc</b>.Google will resize it and it will be blurry and unreadable.  Try changing the layout to something
+                ,Google will resize it to 1600px <b>and it will be blurry and unreadable</b>. Try changing the layout to something
                 more ${width>height?'vertical':'horizontal'} or make multiple smaller graphs.`
 
                 byId('submit').textContent= superScaling<1 ? 'Try anyway':'Insert'
@@ -374,7 +382,7 @@
 }
 
 #buttons{grid-area: buttons; }
-#info{grid-area: info; opacity: 0.8}
+#info{grid-area: info; opacity: 0.8; max-width: 600px;   justify-self: flex-end;}
 
 
 
